@@ -26,4 +26,12 @@ def compute_energy(img: np.ndarray) -> np.ndarray:
         4. Combine:  np.abs(dx) + np.abs(dy)   (L1)   or   np.sqrt(dx**2 + dy**2)  (L2)
            Pick one and justify it in the report.
     """
-    raise NotImplementedError("Person 1: implement compute_energy")
+    if img.ndim == 3:
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    else:
+        gray = img
+    gray = gray.astype(np.float64)
+    dx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)
+    dy = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)
+    # L1 norm (Avidan & Shamir's e1): cheaper than L2, same edge ranking in practice.
+    return np.abs(dx) + np.abs(dy)

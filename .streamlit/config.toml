@@ -1,0 +1,6 @@
+[server]
+# skips the "enter your email" prompt that blocks the first launch
+headless = true
+
+[browser]
+gatherUsageStats = false

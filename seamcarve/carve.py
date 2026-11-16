@@ -7,7 +7,23 @@ A seam is represented as a 1-D integer array of length H:
 """
 import numpy as np
 
+import cv2
+
 from .energy import compute_energy
+
+
+def load_image(path) -> np.ndarray:
+    """
+    Load an image from disk as an H x W x 3 uint8 BGR array.
+
+    Uses np.fromfile + cv2.imdecode instead of cv2.imread so paths with
+    spaces / non-ASCII characters work on Windows.
+    """
+    data = np.fromfile(str(path), dtype=np.uint8)
+    img = cv2.imdecode(data, cv2.IMREAD_COLOR)
+    if img is None:
+        raise ValueError(f"Could not read image: {path}")
+    return img
 
 
 def remove_seam(img: np.ndarray, seam: np.ndarray) -> np.ndarray:
@@ -27,7 +43,15 @@ def remove_seam(img: np.ndarray, seam: np.ndarray) -> np.ndarray:
         and reshape to (H, W-1, C).
         Hint: mask = np.ones((H, W), dtype=bool); mask[np.arange(H), seam] = False
     """
-    raise NotImplementedError("Person 1: implement remove_seam")
+    h, w = img.shape[:2]
+    seam = np.asarray(seam, dtype=np.intp)
+    if seam.shape != (h,):
+        raise ValueError(f"seam must have length {h}, got shape {seam.shape}")
+    if seam.min() < 0 or seam.max() >= w:
+        raise ValueError(f"seam indices must be in [0, {w - 1}]")
+    mask = np.ones((h, w), dtype=bool)
+    mask[np.arange(h), seam] = False
+    return img[mask].reshape((h, w - 1) + img.shape[2:])
 
 
 def transpose(img: np.ndarray) -> np.ndarray:
@@ -37,7 +61,9 @@ def transpose(img: np.ndarray) -> np.ndarray:
 
     TODO (Person 1):  np.transpose(img, (1, 0, 2)) for colour, img.T for 2-D.
     """
-    raise NotImplementedError("Person 1: implement transpose")
+    if img.ndim == 3:
+        return np.ascontiguousarray(np.transpose(img, (1, 0, 2)))
+    return np.ascontiguousarray(img.T)
 
 
 def resize(img: np.ndarray, new_w: int, new_h: int, find_seam, on_seam=None) -> np.ndarray:
@@ -58,4 +84,26 @@ def resize(img: np.ndarray, new_w: int, new_h: int, find_seam, on_seam=None) -> 
             img = remove_seam(img, seam)
         then for height: transpose, do the same loop, transpose back.
     """
-    raise NotImplementedError("Person 1: implement resize")
+    h, w = img.shape[:2]
+    if not (1 <= new_w <= w and 1 <= new_h <= h):
+        raise ValueError(f"target {new_w}x{new_h} must be between 1x1 and {w}x{h}")
+
+    # Vertical seams -> reduce width.
+    while img.shape[1] > new_w:
+        seam = find_seam(compute_energy(img))
+        if on_seam is not None:
+            on_seam(img, seam, "vertical")
+        img = remove_seam(img, seam)
+
+    # Horizontal seams -> transpose, remove vertical seams, transpose back.
+    if img.shape[0] > new_h:
+        img = transpose(img)
+        while img.shape[1] > new_h:
+            seam = find_seam(compute_energy(img))
+            if on_seam is not None:
+                # seam is in transposed coords: seam[j] = row removed in column j
+                on_seam(transpose(img), seam, "horizontal")
+            img = remove_seam(img, seam)
+        img = transpose(img)
+
+    return img

@@ -21,6 +21,20 @@ if defined PY (
     exit /b 0
 )
 
+REM OneDrive syncing can corrupt the .venv (half-synced numpy/opencv files), so warn about it
+echo "%~dp0" | find /i "OneDrive" >nul && (
+    echo   [WARN] this folder is inside OneDrive, which can break installed libraries.
+    echo          If you get import errors, move the project somewhere like C:\Projects
+)
+
+REM if the venv's python itself is broken (python upgraded/uninstalled, venv copied from another PC), rebuild it
+if exist ".venv\Scripts\python.exe" (
+    ".venv\Scripts\python.exe" -c "import sys" >nul 2>nul || (
+        echo   .venv is broken, rebuilding it...
+        rmdir /s /q .venv
+    )
+)
+
 if exist ".venv\Scripts\python.exe" (
     echo   [OK] .venv already exists
 ) else (
@@ -34,20 +48,44 @@ if exist ".venv\Scripts\python.exe" (
 )
 set "VPY=.venv\Scripts\python.exe"
 
-REM only reinstall libraries when requirements.txt has changed since last time
-fc /b requirements.txt .venv\installed-requirements.txt >nul 2>nul
+set "CHECK=import numpy, cv2, matplotlib, streamlit, pytest"
+
+REM install when requirements.txt changed, and also actually import everything,
+REM because a library can be "installed" but broken (e.g. numpy missing its compiled files)
+fc /b requirements.txt .venv\installed-requirements.txt >nul 2>nul || goto install
+"%VPY%" -c "%CHECK%" >nul 2>nul || goto repair
+goto libs_ok
+
+:install
+echo Installing libraries, first time takes a minute...
+"%VPY%" -m pip install --upgrade pip -q
+"%VPY%" -m pip install -r requirements.txt -q
+if errorlevel 1 goto pipfail
+"%VPY%" -c "%CHECK%" >nul 2>nul && goto libs_done
+
+:repair
+echo   Some libraries are broken, reinstalling them (takes a minute)...
+"%VPY%" -m pip install --force-reinstall --no-cache-dir -r requirements.txt -q
+if errorlevel 1 goto pipfail
+"%VPY%" -c "%CHECK%"
 if errorlevel 1 (
-    echo Installing libraries, first time takes a minute...
-    "%VPY%" -m pip install --upgrade pip -q
-    "%VPY%" -m pip install -r requirements.txt -q
-    if errorlevel 1 (
-        echo   [FAIL] pip install failed, check the error above
-        pause
-        exit /b 1
-    )
-    copy /y requirements.txt .venv\installed-requirements.txt >nul
+    echo   [FAIL] libraries still won't import, see the error above.
+    echo          Delete the .venv folder and run run.bat again.
+    echo          If the project is inside OneDrive, move it out first.
+    pause
+    exit /b 1
 )
+
+:libs_done
+copy /y requirements.txt .venv\installed-requirements.txt >nul
+:libs_ok
 echo   [OK] libraries up to date
+goto menu
+
+:pipfail
+echo   [FAIL] pip install failed, check the error above
+pause
+exit /b 1
 
 :menu
 echo.

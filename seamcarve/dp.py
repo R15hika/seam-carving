@@ -34,17 +34,27 @@ def find_seam_dp(energy: np.ndarray) -> np.ndarray:
     dp[0] = energy[0]
     parent[0] = -1
 
+    cols = np.arange(w, dtype=np.intp)
     for i in range(1, h):
-        for j in range(w):
-            left = max(0, j - 1)
-            right = min(w, j + 2)
-            prev = dp[i - 1, left:right]
+        prev = dp[i - 1]
 
-            best_prev_offset = int(np.argmin(prev))
-            best_prev_col = left + best_prev_offset
+        left = np.empty_like(prev)
+        left[0] = np.inf
+        left[1:] = prev[:-1]
 
-            dp[i, j] = energy[i, j] + prev[best_prev_offset]
-            parent[i, j] = best_prev_col
+        mid = prev
+
+        right = np.empty_like(prev)
+        right[-1] = np.inf
+        right[:-1] = prev[1:]
+
+        choices = np.stack((left, mid, right), axis=0)
+        argmins = np.argmin(choices, axis=0)
+        min_prev = choices[argmins, cols]
+
+        dp[i] = energy[i] + min_prev
+        # argmins: 0 -> left (j-1), 1 -> mid (j), 2 -> right (j+1)
+        parent[i] = np.clip(cols + (argmins - 1), 0, w - 1)
 
     seam = np.empty(h, dtype=np.intp)
     seam[-1] = int(np.argmin(dp[-1]))

@@ -77,7 +77,8 @@ def main(path):
     plt.legend(fontsize=11)
     plt.tight_layout()
     runtime_plot_path = os.path.join("output", "seam_carving_runtime_benchmark.png")
-    plt.savefig(runtime_plot_path, dpi=300)
+    plt.yscale("log")
+    plt.savefig(runtime_plot_path, dpi=300, bbox_inches="tight")
     plt.close()
     active_algos = [name for name, data in results.items() if data["energies"]]
     if active_algos:
@@ -105,7 +106,7 @@ def main(path):
             plt.tight_layout()
 
             energy_plot_path = os.path.join("output", "seam_carving_energy_comparison.png")
-            plt.savefig(energy_plot_path, dpi=300)
+            plt.savefig(energy_plot_path, dpi=300, bbox_inches="tight")
             plt.close()
             print(f"Energy comparison plot successfully saved to '{energy_plot_path}'")
 

@@ -1,5 +1,5 @@
 """
-Graph cut (min-cut / max-flow) seam finder  --  OWNER: Person 4
+Graph cut (min-cut / max-flow) seam finder  --  OWNER: Nurafifah Binte Jasmani
 
 See item 4 of the assignment for the graph construction.
 Note: this is slow (Edmonds-Karp is O(V E^2)) - test on small images (~50x50).

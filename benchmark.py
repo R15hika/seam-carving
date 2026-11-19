@@ -1,6 +1,6 @@
 """
 Timing comparison and energy evaluation -- OWNER: Chang Qi Xuan Celest
-Run with: python benchmark.py images/your_image.png
+Run with: python benchmark.py images/your_image.jpg
 """
 import os
 import sys

@@ -1,6 +1,6 @@
 """
-Timing comparison and energy evaluation -- OWNER: CC
-Run with: python benchmark.py images/your_image.jpg
+Timing comparison and energy evaluation -- OWNER: Chang Qi Xuan Celest
+Run with: python benchmark.py images/your_image.png
 """
 import os
 import sys
@@ -19,7 +19,6 @@ MAX_GRAPHCUT_PIXELS = 10000
 
 
 def calculate_seam_energy(energy, seam):
-    """Compute the total cost/energy of a given seam."""
     return float(sum(energy[i, int(c)] for i, c in enumerate(seam)))
 
 def main(path):

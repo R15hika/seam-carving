@@ -1,5 +1,5 @@
 """
-Energy map  --  OWNER: Person 1
+Energy map  --  OWNER: Rishika Bimal Attodi
 
 The energy of a pixel says how "important" it is. High energy = edges/detail
 (keep these), low energy = flat areas like sky (safe to remove).

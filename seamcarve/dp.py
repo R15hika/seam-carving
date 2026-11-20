@@ -1,5 +1,5 @@
 """
-Dynamic programming seam finder  --  OWNER: Person 2
+Dynamic programming seam finder  --  OWNER: Sim Kah Yan
 """
 import numpy as np
 

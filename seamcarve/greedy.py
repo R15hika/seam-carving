@@ -1,5 +1,5 @@
 """
-Greedy seam finder  --  OWNER: Person 3
+Greedy seam finder  --  OWNER: Soo Ke Yee
 """
 import numpy as np
 from .energy import compute_energy

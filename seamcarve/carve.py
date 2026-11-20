@@ -1,5 +1,5 @@
 """
-Seam removal + resize driver  --  OWNER: Person 1
+Seam removal + resize driver  --  OWNER: Rishika Bimal Attodi
 
 A seam is represented as a 1-D integer array of length H:
     seam[i] = column index of the pixel to remove in row i

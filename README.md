@@ -20,14 +20,14 @@ python benchmark.py images/sample.jpg  # timing benchmark
 ```
 
 ## Who owns what
-| File                                        | Owner    | Job                                              |
-|---------------------------------------------|----------|--------------------------------------------------|
-| `seamcarve/energy.py`, `seamcarve/carve.py` | Person 1 | Energy map, seam removal, transpose, resize loop |
-| `seamcarve/dp.py`                           | Person 2 | DP seam finder                                   |
-| `seamcarve/greedy.py`                       | Person 3 | Greedy seam finder                               |
-| `seamcarve/graphcut.py`                     | Person 4 | Min-cut / max-flow seam finder                   |
-| `tests/`, `benchmark.py`                    | Person 5 | Testing, timing, charts                          |
-| `app.py`, `.github/workflows/ci.yml`        | Person 6 | Streamlit app, visualisation, CI                 |
+| File                                        | Owner                   | Job                                              |
+|---------------------------------------------|-------------------------|--------------------------------------------------|
+| `seamcarve/energy.py`, `seamcarve/carve.py` | Rishika Bimal Attodi    | Energy map, seam removal, transpose, resize loop |
+| `seamcarve/dp.py`                           | Sim Kah Yan             | DP seam finder                                   |
+| `seamcarve/greedy.py`                       | Soo Ke Yee              | Greedy seam finder                               |
+| `seamcarve/graphcut.py`                     | Nurafifah Binte Jasmani | Min-cut / max-flow seam finder                   |
+| `tests/`, `benchmark.py`                    | Chang Qi Xuan Celest    | Testing, timing, charts                          |
+| `app.py`, `.github/workflows/ci.yml`        | Ang Yu Xuan             | Streamlit app, visualisation, CI                 |
 
 ## Shared contract
 - Energy: `compute_energy(img) -> H x W float array`

@@ -1,5 +1,5 @@
 """
-Interactive demo  --  OWNER: Person 6
+Interactive demo  --  OWNER: Ang Yu Xuan
 Run with:  streamlit run app.py
 """
 import time

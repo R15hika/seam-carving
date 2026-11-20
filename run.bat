@@ -96,15 +96,17 @@ echo    1. Open the app (in your browser)
 echo    2. Run tests
 echo    3. Run benchmark
 echo    4. Open a terminal with the environment ready
-echo    5. Quit
+echo    5. Open the live app (online)
+echo    6. Quit
 echo ============================================
 set "choice="
-set /p "choice=Pick 1-5: "
+set /p "choice=Pick 1-6: "
 if "%choice%"=="1" goto app
 if "%choice%"=="2" goto tests
 if "%choice%"=="3" goto bench
 if "%choice%"=="4" goto shell
-if "%choice%"=="5" exit /b 0
+if "%choice%"=="5" goto live
+if "%choice%"=="6" exit /b 0
 goto menu
 
 :app
@@ -126,6 +128,12 @@ set /p "img=Image path (drag a picture into this window, then press Enter): "
 if not defined img goto menu
 "%VPY%" benchmark.py %img%
 pause
+goto menu
+
+:live
+REM deployed on streamlit community cloud, auto-redeploys on every push to main
+start "" https://team4-seamcarve.streamlit.app
+echo Opened the live app in your browser
 goto menu
 
 :shell
